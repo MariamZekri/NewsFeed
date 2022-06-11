@@ -43,6 +43,19 @@ class ArticleCoreData {
         }
     }
     
+    func deleteAllArticlesCoreData() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ArticlesData")
+        
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        batchDeleteRequest.resultType = .resultTypeObjectIDs
+        do {
+            try context.execute(batchDeleteRequest)
+            
+        } catch {
+            print("Failed")
+        }
+    }
+    
     @discardableResult
     func getAllArticlesCoreData(printItems: Bool = false) -> [ArticleCoreDataObject] {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "ArticlesData")
@@ -74,5 +87,5 @@ class ArticleCoreDataObject {
     var title: String = ""
     var articleDescription: String = ""
     var publishedAt: String = ""
-    var urlToImage = ""
+    var urlToImage: String = ""
 }

@@ -23,8 +23,13 @@ class NewsFeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
       
+        
         newsCollection.register(Header.self, forSupplementaryViewOfKind: NewsFeedViewController.gategoryHeaderId, withReuseIdentifier: HeaderId)
+        
+        setupCollecionLayout()
 
+        if Reachability.isConnectedToNetwork(){
+      
         viewModel.currentStock.subscribe { item in
             self.stockData[item.keys[item.startIndex]] = item.values[item.startIndex]
             self.stockData.removeValue(forKey: "")
@@ -37,17 +42,35 @@ class NewsFeedViewController: UIViewController {
             
             self.articles = item
             self.newsCollection.reloadData()
-            ArticleCoreData.shared.saveArticlesToCoreData(article: item)
+            self.saveLatestTenNews(article: self.articles)
             
         } onError: { error in
             print(error)
         } .disposed(by: disposeBag)
         
+            print("Internet Connection Available!")
+        }else{
+            
+            let subArticles = ArticleCoreData.shared.getAllArticlesCoreData()
+            self.creatOfflineSubArticles(subArticle: subArticles)
+            self.newsCollection.reloadData()
         
-        setupCollecionLayout()
+        }
         
     }
     
+    func saveLatestTenNews(article: [Article]){
+         let tenLatestNews = article.suffix(10)
+        ArticleCoreData.shared.deleteAllArticlesCoreData()
+        ArticleCoreData.shared.saveArticlesToCoreData(article: Array(tenLatestNews))
+    }
+    
+    func creatOfflineSubArticles (subArticle: [ArticleCoreDataObject]){
+        for subItem in subArticle {
+            let article = Article(source: Source(id: "", name: ""), author: "", title: subItem.title, articleDescription: subItem.articleDescription, url: "", urlToImage: subItem.urlToImage, publishedAt: subItem.publishedAt, content: "")
+            self.articles.append(article)
+        }
+    }
     
 }
 extension NewsFeedViewController:UICollectionViewDelegate, UICollectionViewDataSource {
