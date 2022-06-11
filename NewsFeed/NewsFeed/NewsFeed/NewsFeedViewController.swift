@@ -34,6 +34,7 @@ class NewsFeedViewController: UIViewController {
         } .disposed(by: disposeBag)
         
         viewModel.articles.subscribe { item in
+            
             self.articles = item
             self.newsCollection.reloadData()
             ArticleCoreData.shared.saveArticlesToCoreData(article: item)
