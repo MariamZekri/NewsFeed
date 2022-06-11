@@ -20,7 +20,6 @@ class LatestNewsCell: UICollectionViewCell {
         newsImage.kf.setImage(with: url)
         newsImage.layer.cornerRadius = 15
        newsImage.clipsToBounds = true
-        newsImage.backgroundColor = .systemPink
     }
     
 }
